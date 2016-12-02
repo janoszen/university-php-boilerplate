@@ -1,0 +1,30 @@
+{% extends "base.twig" %}
+
+{% set pagetitle = 'Internal Server Error' %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-md-6 col-md-push-3">
+			<h1 class="page-header">An error happened, sorry</h1>
+
+			<p>Our server has encountered an error it can't recover from. Please try to trace back your steps. If the
+				error persists, contact us.</p>
+
+			<p>Please follow these steps to get back on track:</p>
+
+			<ul>
+				<li><a href="/" onclick="window.history.back();return false;">Go back</a> and try again.</li>
+				<li>Go to our <a href="/">Homepage</a> and try again from there.</li>
+			</ul>
+
+			<hr />
+
+			{% if twig.debug %}
+				{% if exception.message %}
+					<blockquote>{{ exception.message }}</blockquote>
+				{% endif %}
+				{{ dump(exception) }}
+			{% endif %}
+		</div>
+	</div>
+{% endblock %}

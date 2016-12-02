@@ -1,0 +1,26 @@
+{% extends "base.twig" %}
+
+{% set pagetitle = 'Method not allowed' %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-md-6 col-md-push-3">
+			<h1 class="page-header">Your Browser sent an invalid request</h1>
+
+			<p>Your browser sent a request our server <strong>couldn't process</strong> because the access
+				method it tried to use is invalid for this page. Please try again or follow the steps below
+				to resolve this issue.</p>
+
+			<p>Please follow these steps to get back on track:</p>
+
+			<ul>
+				<li><a href="/" onclick="window.history.back();return false;">Go back</a> and try again.</li>
+				<li>Check for any updates for your browser.</li>
+				<li>Go to our <a href="/">Homepage</a> and try again from there.</li>
+				<li>If you typed the address for this site, check that you typed everything correctly.</li>
+			</ul>
+
+			<hr />
+		</div>
+	</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.twig" %}
+
+{% set pagetitle = 'Page not found' %}
+
+{% block content %}
+	<div class="row">
+		<div class="col-md-6 col-md-push-3">
+			<h1 class="page-header">Page not found, sorry</h1>
+
+			<p>The page you requested was <strong>not found</strong> on our servers.</p>
+
+			<p>Please follow these steps to get back on track:</p>
+
+			<ul>
+				<li>If you typed the address for this site, check that you typed everything correctly.</li>
+				<li>Go to our <a href="/">Homepage</a> and try again from there.</li>
+				<li><a href="/" onclick="window.history.back();return false;">Go back</a> and try again.</li>
+			</ul>
+
+			<hr />
+		</div>
+	</div>
+{% endblock %}
