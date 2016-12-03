@@ -39,7 +39,6 @@ class FrontController {
 		}
 	}
 
-
 	public function process() {
 		$this->dic->alias(ServerRequestInterface::class, ServerRequest::class);
 		$this->dic->alias(ResponseInterface::class, Response::class);

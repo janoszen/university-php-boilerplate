@@ -2,7 +2,9 @@
 
 use Janoszen\Boilerplate\Controller\ErrorController;
 use Janoszen\Boilerplate\Controller\HelloWorldController;
+use Janoszen\Boilerplate\Core\DatabaseMigrationProcessor;
 use Janoszen\Boilerplate\Core\Router;
+use Janoszen\Boilerplate\Model\Migration\SampleMigration;
 
 /**
  * This is the configuration for the Auryn dependency injector. It is processed by the FrontController
@@ -57,9 +59,17 @@ return [
 		 * @see http://php.net/manual/en/pdo.prepared-statements.php
 		 */
 		PDO::class => [
-			':dsn'      => '',
-			':username' => '',
+			':dsn'      => 'mysql:host=localhost;dbname=test',
+			':username' => 'root',
 			':passwd'   => '',
+		],
+		/**
+		 * Database migration classes.
+		 */
+		DatabaseMigrationProcessor::class => [
+			':migrations' => [
+				SampleMigration::class
+			]
 		]
-	]
+	],
 ];
