@@ -24,32 +24,40 @@ class FrontController {
 	 */
 	public function __construct($config) {
 		$this->config = $config;
+		$this->dic = new Injector();
+
+		foreach ($config['sharedObjects'] as $sharedClass) {
+			$this->dic->share($sharedClass);
+		}
+
+		foreach ($config['interfaceImplementations'] as $interface => $implementation) {
+			$this->dic->alias($interface, $implementation);
+		}
+
+		foreach ($config['classParameters'] as $class => $parameters) {
+			$this->dic->define($class, $parameters);
+		}
 	}
 
 
 	public function process() {
-		$dic = new Injector();
-
-		$dic->alias(ServerRequestInterface::class, ServerRequest::class);
-		$dic->alias(ResponseInterface::class, Response::class);
+		$this->dic->alias(ServerRequestInterface::class, ServerRequest::class);
+		$this->dic->alias(ResponseInterface::class, Response::class);
 
 		$request = ServerRequest::fromGlobals();
 		$response = new Response();
 		$responseContainer = new HTTPResponseContainer($response);
-		$dic->share($request);
-		$dic->share($responseContainer);
+		$this->dic->share($request);
+		$this->dic->share($responseContainer);
 
 		/**
 		 * @var Router $router
 		 */
-		$router = $dic->make(Router::class, [
-			':routes'=> $this->config['routing']['routes'],
-			':errorHandlers' =>$this->config['routing']['errorHandlers']
-		]);
+		$router = $this->dic->make(Router::class);
 		$routingResponse = $router->route($request);
 		$method = $routingResponse->getMethod();
-		$controller = $dic->make($routingResponse->getClass());
-		$controllerResponse = $dic->execute([$controller, $method]);
+		$controller = $this->dic->make($routingResponse->getClass());
+		$controllerResponse = $this->dic->execute([$controller, $method]);
 
 		// Process controller response
 		if (is_string($controllerResponse)) {
