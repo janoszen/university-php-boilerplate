@@ -56,7 +56,12 @@ class FrontController {
 		$routingResponse = $router->route($request);
 		$method = $routingResponse->getMethod();
 		$controller = $this->dic->make($routingResponse->getClass());
-		$controllerResponse = $this->dic->execute([$controller, $method]);
+		$parameters = $routingResponse->getParameters();
+		foreach ($parameters as $key => $value) {
+			unset($parameters[$key]);
+			$parameters[':' . $key] = $value;
+		}
+		$controllerResponse = $this->dic->execute([$controller, $method], $parameters);
 
 		// Process controller response
 		if (is_string($controllerResponse)) {

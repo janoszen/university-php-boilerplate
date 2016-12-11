@@ -8,4 +8,10 @@ class HelloWorldController extends AbstractController {
 			'message' => 'Hello world!',
 		];
 	}
+
+	public function greet($name) {
+		return [
+			'name' => $name
+		];
+	}
 }

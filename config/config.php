@@ -50,7 +50,8 @@ return [
 				500 => [ErrorController::class, 'error'],
 			],
 			':routes' => [
-				['GET', '/', HelloWorldController::class, 'helloWorld']
+				['GET', '/', HelloWorldController::class, 'helloWorld'],
+				['GET', '/greet/{name:[a-zA-Z]+}', HelloWorldController::class, 'greet']
 			]
 		],
 		/**
