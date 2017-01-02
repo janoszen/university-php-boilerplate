@@ -60,3 +60,7 @@ Your controller methods MUST return with one of the following:
 - A string: this will be sent to the browser without further processing as text/html.
 - An array: this will be routed to the view for rendering
 - A response object: this will be sent to the browser without further processing.
+
+### Database connection
+
+Database connection is provided with [PDO](http://php.net/PDO). Simply request that PDO be injected into your class. An example model and an example database migration has been provided.
