@@ -54,34 +54,49 @@ class FrontController {
 		 */
 		$router = $this->dic->make(Router::class);
 		$routingResponse = $router->route($request);
-		$method = $routingResponse->getMethod();
-		$controller = $this->dic->make($routingResponse->getClass());
-		$parameters = $routingResponse->getParameters();
-		foreach ($parameters as $key => $value) {
-			unset($parameters[$key]);
-			$parameters[':' . $key] = $value;
-		}
-		$controllerResponse = $this->dic->execute([$controller, $method], $parameters);
+		$callController = function(RoutingResponse $routingResponse) use ($responseContainer) {
+			$method     = $routingResponse->getMethod();
+			$controller = $this->dic->make($routingResponse->getClass());
+			$parameters = $routingResponse->getParameters();
+			foreach ($parameters as $key => $value) {
+				unset($parameters[$key]);
+				$parameters[':' . $key] = $value;
+			}
+			$controllerResponse = $this->dic->execute([$controller, $method], $parameters);
 
-		// Process controller response
-		if (is_string($controllerResponse)) {
-			// Controller responded with a string. Output it with
-			$responseContainer->setResponse(
-				$responseContainer->getResponse()->withBody(stream_for($controllerResponse)));
-		} else if (is_array($controllerResponse)) {
-			// Controller responded with an array. Pass it to the view.
-			$loader = new Twig_Loader_Filesystem(__DIR__ . '/../View');
-			$twig = new Twig_Environment($loader, []);
-			$templateName = preg_replace('/.*\\\\/', '', $routingResponse->getClass()) .
-				'/' . $routingResponse->getMethod() . '.twig';
-			$output = $twig->render($templateName, $controllerResponse);
-			$responseContainer->setResponse(
-				$responseContainer->getResponse()->withBody(stream_for($output)));
-		} else if ($controllerResponse instanceof ResponseInterface) {
-			// Controller responded with a response object. Output it.
-			$responseContainer->setResponse($controllerResponse);
-		} else {
-			throw new Exception('Invalid controller response: ' . var_export($controllerResponse));
+			// Process controller response
+			if (is_string($controllerResponse)) {
+				// Controller responded with a string. Output it with
+				$responseContainer->setResponse(
+					$responseContainer->getResponse()->withBody(stream_for($controllerResponse)));
+			} else if (is_array($controllerResponse)) {
+				// Controller responded with an array. Pass it to the view.
+				$loader = new Twig_Loader_Filesystem(__DIR__ . '/../View');
+				$twig = new Twig_Environment($loader, []);
+				$templateName = preg_replace('/.*\\\\/', '', $routingResponse->getClass()) .
+					'/' . $routingResponse->getMethod() . '.twig';
+				$output = $twig->render($templateName, $controllerResponse);
+				$responseContainer->setResponse(
+					$responseContainer->getResponse()->withBody(stream_for($output)));
+			} else if ($controllerResponse instanceof ResponseInterface) {
+				// Controller responded with a response object. Output it.
+				$responseContainer->setResponse($controllerResponse);
+			} else {
+				throw new Exception('Invalid controller response: ' . var_export($controllerResponse));
+			}
+		};
+		try {
+			$callController($routingResponse);
+		} catch (\Exception $e) {
+			if ($e->getCode() == 404) {
+				try {
+					$callController($router->getNotFoundRoute());
+				} catch (\Exception $e) {
+					$callController($router->getServerErrorRoute());
+				}
+			} else {
+				$callController($router->getServerErrorRoute());
+			}
 		}
 
 		//Output content from response
