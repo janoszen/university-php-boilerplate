@@ -2,33 +2,33 @@
 
 namespace Janoszen\Boilerplate\Core;
 
+use Janoszen\Boilerplate\DB\DatabaseConnection;
 use PDO;
 
 class DatabaseMigrationProcessor {
 	/**
-	 * @var PDO
+	 * @var DatabaseConnection
 	 */
-	private $pdo;
+	private $db;
 	/**
 	 * @var AbstractDatabaseMigration[]
 	 */
 	private $migrations;
 
 	/**
-	 * @param PDO                         $pdo
+	 * @param DatabaseConnection          $db
 	 * @param AbstractDatabaseMigration[] $migrations
 	 */
-	public function __construct(PDO $pdo, $migrations) {
-		$this->pdo = $pdo;
-		$pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+	public function __construct(DatabaseConnection $db, $migrations) {
+		$this->db = $db;
 		$this->migrations = $migrations;
 	}
 
 	/**
-	 * @return PDO
+	 * @return DatabaseConnection
 	 */
 	protected function getConnection() {
-		return $this->pdo;
+		return $this->db;
 	}
 
 	/**
@@ -47,9 +47,8 @@ class DatabaseMigrationProcessor {
 			');
 
 		$executedMigrations = $connection->query(/** @lang MySQL */
-			'SELECT class_name FROM migrations')->fetchAll();
+			'SELECT class_name FROM migrations');
 		$dueMigrations      = $this->migrations;
-
 		foreach ($executedMigrations as $row) {
 			if (in_array($row['class_name'], $dueMigrations)) {
 				unset($dueMigrations[array_search($row['class_name'], $dueMigrations)]);
@@ -63,8 +62,7 @@ class DatabaseMigrationProcessor {
 			$migrationClass = new $dueMigration($connection);
 			$migrationClass->upgrade();
 			$connection
-				->prepare('INSERT INTO migrations (class_name) VALUES (?)')
-				->execute([$dueMigration]);
+				->query('INSERT INTO migrations (class_name) VALUES (?)', [$dueMigration]);
 		}
 	}
 }

@@ -2,24 +2,22 @@
 
 namespace Janoszen\Boilerplate\Core;
 
+use Janoszen\Boilerplate\DB\DatabaseConnection;
 use PDO;
 
 abstract class AbstractDatabaseMigration {
 	/**
-	 * @var PDO
+	 * @var DatabaseConnection
 	 */
-	private $pdo;
+	protected $db;
 
-	public function __construct(PDO $pdo) {
-		$this->pdo = $pdo;
+	public function __construct(DatabaseConnection $db) {
+		$this->db = $db;
 	}
 
 	public function upgrade() {
-		$this->execute($this->pdo);
+		$this->execute();
 	}
 
-	/**
-	 * @param PDO $pdo
-	 */
-	abstract protected function execute(PDO $pdo);
+	abstract protected function execute();
 }

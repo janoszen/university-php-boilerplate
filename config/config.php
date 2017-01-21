@@ -4,6 +4,8 @@ use Janoszen\Boilerplate\Controller\ErrorController;
 use Janoszen\Boilerplate\Controller\HelloWorldController;
 use Janoszen\Boilerplate\Core\DatabaseMigrationProcessor;
 use Janoszen\Boilerplate\Core\Router;
+use Janoszen\Boilerplate\DB\DatabaseConnection;
+use Janoszen\Boilerplate\DB\PDODatabaseConnection;
 use Janoszen\Boilerplate\Model\Migration\SampleMigration;
 
 /**
@@ -20,7 +22,7 @@ return [
 	 * keep it in mind when hunting bugs.
 	 */
 	'sharedObjects' => [
-		PDO::class
+		PDODatabaseConnection::class
 	],
 	/**
 	 * Interfaces are nice. You can list interfaces and their implementations here in order to create a dependency
@@ -33,7 +35,7 @@ return [
 	 * ```
 	 */
 	'interfaceImplementations' => [
-
+		DatabaseConnection::class => PDODatabaseConnection::class
 	],
 	/**
 	 * Provide the class constructor parameters here. Remember, these are named parameters only, if you need classes,
@@ -59,10 +61,10 @@ return [
 		 *
 		 * @see http://php.net/manual/en/pdo.prepared-statements.php
 		 */
-		PDO::class => [
+		PDODatabaseConnection::class => [
 			':dsn'      => 'mysql:host=localhost;dbname=test',
 			':username' => 'root',
-			':passwd'   => '',
+			':password' => '',
 		],
 		/**
 		 * Database migration classes.
