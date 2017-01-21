@@ -5,6 +5,7 @@ use Janoszen\Boilerplate\Controller\HelloWorldController;
 use Janoszen\Boilerplate\Core\DatabaseMigrationProcessor;
 use Janoszen\Boilerplate\Core\Router;
 use Janoszen\Boilerplate\DB\DatabaseConnection;
+use Janoszen\Boilerplate\DB\OCI8DatabaseConnection;
 use Janoszen\Boilerplate\DB\PDODatabaseConnection;
 use Janoszen\Boilerplate\Model\Migration\SampleMigration;
 
@@ -35,7 +36,8 @@ return [
 	 * ```
 	 */
 	'interfaceImplementations' => [
-		DatabaseConnection::class => PDODatabaseConnection::class
+		//DatabaseConnection::class => PDODatabaseConnection::class
+		DatabaseConnection::class => OCI8DatabaseConnection::class
 	],
 	/**
 	 * Provide the class constructor parameters here. Remember, these are named parameters only, if you need classes,
@@ -65,6 +67,11 @@ return [
 			':dsn'      => 'mysql:host=localhost;dbname=test',
 			':username' => 'root',
 			':password' => '',
+		],
+		OCI8DatabaseConnection::class => [
+			':username' => 'test',
+			':password' => 'odohjamoaDobaic8',
+			':connection_string' => 'test.cxwa5gl57rna.eu-central-1.rds.amazonaws.com/TEST'
 		],
 		/**
 		 * Database migration classes.
