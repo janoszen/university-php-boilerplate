@@ -69,9 +69,9 @@ return [
 			':password' => '',
 		],
 		OCI8DatabaseConnection::class => [
-			':username' => 'test',
-			':password' => 'odohjamoaDobaic8',
-			':connection_string' => 'test.cxwa5gl57rna.eu-central-1.rds.amazonaws.com/TEST'
+			':username' => 'youruser',
+			':password' => 'yourpassword',
+			':connection_string' => 'your.database.server:1521/YOURSID'
 		],
 		/**
 		 * Database migration classes.

@@ -12,7 +12,9 @@ class SampleMigration extends AbstractDatabaseMigration {
 		$this->db->query(/** @lang MySQL */
 			'
 				CREATE TABLE sometable (
-					id INT PRIMARY KEY AUTO_INCREMENT
+					id INT,
+					
+					CONSTRAINT pk_id PRIMARY KEY (id)
 				)
 			'
 		);

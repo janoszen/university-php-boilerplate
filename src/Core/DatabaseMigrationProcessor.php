@@ -3,6 +3,7 @@
 namespace Janoszen\Boilerplate\Core;
 
 use Janoszen\Boilerplate\DB\DatabaseConnection;
+use Janoszen\Boilerplate\DB\DatabaseException;
 use PDO;
 
 class DatabaseMigrationProcessor {
@@ -36,15 +37,18 @@ class DatabaseMigrationProcessor {
 	 */
 	public function upgradeDatabase() {
 		$connection = $this->getConnection();
-		$connection->query(/** @lang MySQL */
-			'
-			CREATE TABLE IF NOT EXISTS migrations (
-				id BIGINT PRIMARY KEY AUTO_INCREMENT NOT NULL,
-				class_name VARCHAR(255),
-				
-				UNIQUE u_class_name (class_name)
-			) ENGINE=InnoDB;
-			');
+		try {
+			$connection->query(/** @lang MySQL */
+				'
+				CREATE TABLE migrations (
+					class_name VARCHAR(255),
+					
+					CONSTRAINT pk_class_name PRIMARY KEY (class_name)
+				);
+				');
+		} catch (DatabaseException $ignore) {
+
+		}
 
 		$executedMigrations = $connection->query(/** @lang MySQL */
 			'SELECT class_name FROM migrations');
